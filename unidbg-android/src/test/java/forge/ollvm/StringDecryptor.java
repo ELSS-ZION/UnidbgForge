@@ -219,7 +219,7 @@ public class StringDecryptor {
         }
 
         // 将修改写入新文件
-        savePatchedSo(soPath, "decrypted.so");
+        savePatchedSo(soPath);
     }
 
     private byte[] longToBytes(long value, int size) {
@@ -234,9 +234,14 @@ public class StringDecryptor {
         return buffer.array();
     }
 
-    private void savePatchedSo(String inputPath, String outputPath) throws IOException {
+    private void savePatchedSo(String inputPath) throws IOException {
+        // 获取输入文件的目录和文件名
+        File inputFile = new File(inputPath);
+        String outputFileName = inputFile.getName() + ".destr.so";
+        String outputFilePath = new File(inputFile.getParentFile(), outputFileName).getPath();
+
         // 读取原始SO文件
-        byte[] original = java.nio.file.Files.readAllBytes(new File(inputPath).toPath());
+        byte[] original = java.nio.file.Files.readAllBytes(inputFile.toPath());
 
         // 应用内存修改，使用合并后的内存块
         for (Map.Entry<Long, byte[]> entry : mergedMap.entrySet()) {
@@ -310,10 +315,10 @@ public class StringDecryptor {
         }
 
         // 写入新文件
-        try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+        try (FileOutputStream fos = new FileOutputStream(outputFilePath)) {
             fos.write(original);
         }
-        System.out.println("解密完成，保存至: " + outputPath);
+        System.out.println("解密完成，保存至: " + outputFilePath);
     }
 
     public static void main(String[] args) {
