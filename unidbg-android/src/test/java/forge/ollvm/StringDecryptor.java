@@ -2,15 +2,13 @@ package forge.ollvm;
 
 import com.github.unidbg.AndroidEmulator;
 import com.github.unidbg.Module;
-import com.github.unidbg.arm.backend.UnHook;
+import com.github.unidbg.arm.backend.*;
 import com.github.unidbg.linux.android.AndroidEmulatorBuilder;
 import com.github.unidbg.linux.android.AndroidResolver;
 import com.github.unidbg.linux.android.dvm.DalvikModule;
 import com.github.unidbg.linux.android.dvm.VM;
 import com.github.unidbg.memory.MemRegion;
 import com.github.unidbg.memory.Memory;
-import com.github.unidbg.arm.backend.Backend;
-import com.github.unidbg.arm.backend.WriteHook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +30,7 @@ public class StringDecryptor {
 
     public StringDecryptor() {
         emulator = AndroidEmulatorBuilder.for32Bit()
+                .addBackendFactory(new Unicorn2Factory(true))
                 .setRootDir(new File("unidbg-android/src/test/resources/android"))
                 .build();
 
@@ -320,7 +319,7 @@ public class StringDecryptor {
     public static void main(String[] args) {
         try {
             StringDecryptor decryptor = new StringDecryptor();
-            decryptor.decryptStrings("unidbg-android/src/test/resources/example_binaries/ollvm_str/libnative-lib.so"); // 修改为你的SO路径
+           decryptor.decryptStrings("unidbg-android/src/test/resources/example_binaries/ollvm_str/libnative-lib.so");
         } catch (Exception e) {
             e.printStackTrace();
         }
